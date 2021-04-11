@@ -1,21 +1,16 @@
 using System.Threading.Tasks;
-using Domain.Core.Repositories;
-using Domain.Core.Services;
+using Domain.Core.Abstractions.Repositories;
+using Domain.Core.Abstractions.Services;
 
 namespace Domain.Services.Calculation
 {
-    public class CalculateService : ICalculateService
+    public class CalculationService : ICalculationService
     {
         private readonly IUserRepository _userRepository;
 
-        public CalculateService(IUserRepository userRepository)
+        public CalculationService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-        }
-
-        public Task CalculateRollingRetention()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

@@ -1,7 +1,8 @@
-using Domain.Entities;
+using Domain.Core.Entities;
+using Infrastructure.EntityFramework.Configurations;
 using Microsoft.EntityFrameworkCore;
 
-namespace Repositories.EfContext
+namespace Infrastructure.EntityFramework
 {
     public class EfContext : DbContext
     {
@@ -10,5 +11,10 @@ namespace Repositories.EfContext
         }
         
         public DbSet<User> Users { get; set; }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        }
     }
 }

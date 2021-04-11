@@ -2,8 +2,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Core.Abstractions.Services
 {
-    public interface ICalculateService
+    public interface ICalculationService
     {
-        Task CalculateRollingRetention();
     }
 }

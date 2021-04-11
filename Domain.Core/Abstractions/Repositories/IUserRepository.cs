@@ -1,7 +1,4 @@
-using System.Threading.Tasks;
-using Domain.Core.Entities;
-
-namespace Domain.Core.Repositories
+namespace Domain.Core.Abstractions.Repositories
 {
     public interface IUserRepository
     {
