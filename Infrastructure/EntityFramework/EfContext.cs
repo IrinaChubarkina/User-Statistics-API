@@ -1,5 +1,5 @@
+using System.Reflection;
 using Domain.Core.Entities;
-using Infrastructure.EntityFramework.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.EntityFramework
@@ -14,7 +14,9 @@ namespace Infrastructure.EntityFramework
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }
