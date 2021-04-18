@@ -7,7 +7,7 @@ namespace Shared.Extensions
     {
         public static DateTime ToDateTime(this string s)
         {
-            const string format = "dd/MM/yyyy";
+            const string format = "dd.MM.yyyy";
             return DateTime.ParseExact(s, format, CultureInfo.InvariantCulture);
         }
     }

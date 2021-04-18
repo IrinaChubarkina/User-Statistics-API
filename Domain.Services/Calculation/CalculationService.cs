@@ -21,7 +21,9 @@ namespace Domain.Services.Calculation
 
             var columns = allUsers
                 .GroupBy(x => x.LifeTime)
-                .Select(group => new HistogramColumn(group.Count(), group.Key));
+                .Select(group => new HistogramColumn(group.Count(), group.Key))
+                .ToList()
+                .OrderBy(x => x.LifeTime);
 
             var rollingRetention = GetRollingRetentionForDay(day);
             return new CalculationResult(rollingRetention, columns);

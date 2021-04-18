@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.Specification;
@@ -10,6 +9,6 @@ namespace Domain.Core.Abstractions.Repositories
     {
         IQueryable<User> GetBySpecification(ISpecification<User> spec);
         IQueryable<User> GetAll();
-        Task AddUsersAsync(IEnumerable<User> users);
+        Task<int> AddUserAsync(User user);
     }
 }

@@ -6,6 +6,7 @@ namespace Domain.Core.Abstractions.Services
 {
     public interface IUserService
     {
-        Task AddUsersAsync(IEnumerable<UserDto> users);
+        IEnumerable<UserDto> GetAll();
+        Task<int> AddUserAsync(UserDto user);
     }
 }

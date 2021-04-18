@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.Specification;
@@ -32,10 +31,11 @@ namespace Infrastructure.Repositories
                 .AsNoTracking();
         }
 
-        public async Task AddUsersAsync(IEnumerable<User> users)
+        public async Task<int> AddUserAsync(User user)
         {
-            await _context.AddRangeAsync(users);
+            await _context.AddAsync(user);
             await _context.SaveChangesAsync();
+            return user.Id;
         }
     }
 }

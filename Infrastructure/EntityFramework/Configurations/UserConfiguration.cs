@@ -12,6 +12,7 @@ namespace Infrastructure.EntityFramework.Configurations
             
             builder.Property(x => x.RegistrationDate).IsRequired();
             builder.Property(x => x.LastActivityDate).IsRequired();
+            builder.Property(x => x.LifeTime).UsePropertyAccessMode(PropertyAccessMode.Property);
         }
     }
 }

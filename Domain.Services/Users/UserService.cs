@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Domain.Core.Abstractions.Repositories;
@@ -23,16 +24,24 @@ namespace Domain.Services.Users
             _logger = logger;
         }
 
-        public Task AddUsersAsync(IEnumerable<UserDto> userDtos)
+        public IEnumerable<UserDto> GetAll()
+        {
+            var users = _userRepository.GetAll().ToList();
+            var userDtos = _mapper.Map<IEnumerable<UserDto>>(users);
+            return userDtos;
+        }
+
+        public async Task<int> AddUserAsync(UserDto userDto)
         {
             try
             {
-                var users = _mapper.Map<IEnumerable<User>>(userDtos);
-                return _userRepository.AddUsersAsync(users);
+                var user = _mapper.Map<User>(userDto);
+                await _userRepository.AddUserAsync(user);
+                return user.Id;
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, "Can not add users \n");
+                _logger.LogWarning(e, "Can not add user \n");
                 throw;
             }
         }
