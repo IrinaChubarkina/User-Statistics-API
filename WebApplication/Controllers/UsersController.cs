@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
 using Domain.Core.Abstractions.Services;
-using Domain.Core.Dtos;
+using Domain.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using WebApplication.Models;
 
 namespace WebApplication.Controllers
 {
@@ -10,42 +12,37 @@ namespace WebApplication.Controllers
     [Route("[controller]")]
     public class UsersController : ControllerBase
     {
-        private readonly ICalculationService _calculationService;
         private readonly IUserService _userService;
-        private readonly ILogger<UsersController> _logger;
+        private readonly IMapper _mapper;
 
-        public UsersController(ILogger<UsersController> logger,
-            ICalculationService calculationService,
-            IUserService userService)
+        public UsersController(IUserService userService, IMapper mapper)
         {
-            _logger = logger;
-            _calculationService = calculationService;
             _userService = userService;
-        }
-
-        [HttpGet]
-        [Route("calculate")]
-        public IActionResult Calculate()
-        {
-            const int days = 7;
-            var result = _calculationService.GetStatisticsForDay(days);
-            return Ok(result);
+            _mapper = mapper;
         }
         
         [HttpGet]
-        [Route("list")]
-        public IActionResult GetAllUsers()
+        public async Task<IActionResult> Get()
         {
-            var users =_userService.GetAll();
+            var users = await _userService.GetAll();
             return Ok(users);
         }
         
         [HttpPost]
-        [Route("add")]
-        public async Task<IActionResult> AddUser([FromBody]UserDto user)
+        public async Task<IActionResult> Create(UserDto userDto)
         {
-            var id = await _userService.AddUserAsync(user);
-            return Ok(id);
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                user = await _userService.Add(user);
+                var response = _mapper.Map<UserDto>(user);
+            
+                return Ok(response);
+            }
+            catch (ArgumentException)
+            {
+                return BadRequest();
+            }
         }
     }
 }

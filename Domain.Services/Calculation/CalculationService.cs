@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain.Core.Abstractions.Repositories;
 using Domain.Core.Abstractions.Services;
 using Domain.Core.Dtos;
@@ -15,29 +17,21 @@ namespace Domain.Services.Calculation
             _userRepository = userRepository;
         }
 
-        public CalculationResult GetStatisticsForDay(int day)
+        public async Task<IEnumerable<UserGroup>> GetLifeTimeDistribution()
         {
-            var allUsers = _userRepository.GetAll();
-
-            var columns = allUsers
-                .GroupBy(x => x.LifeTime)
-                .Select(group => new HistogramColumn(group.Count(), group.Key))
-                .ToList()
-                .OrderBy(x => x.LifeTime);
-
-            var rollingRetention = GetRollingRetentionForDay(day);
-            return new CalculationResult(rollingRetention, columns);
+            var groups = await _userRepository.GetGroupedByLifeTime();
+            return groups.OrderBy(x => x.LifeTime);
         }
-        
-        private double GetRollingRetentionForDay(int day)
+
+        public async Task<double> GetRollingRetentionForDay(int day)
         {
             var lifeTimeSpec = new UsersByLifeTimeSpecification(day);
             var registrationDateSpec = new UsersByRegistrationDateSpecification(day);
 
-            var returningUsers = _userRepository.GetBySpecification(lifeTimeSpec);
-            var registeredUsers = _userRepository.GetBySpecification(registrationDateSpec);
+            var returningUsersCount = await _userRepository.CountBySpecification(lifeTimeSpec);
+            var registeredUsersCount = await _userRepository.CountBySpecification(registrationDateSpec);
 
-            return returningUsers.Count() / (double) registeredUsers.Count() * 100;
+            return returningUsersCount / (double) registeredUsersCount * 100;
         }
     }
 }

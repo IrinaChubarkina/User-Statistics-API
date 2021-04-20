@@ -1,15 +1,16 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Core.Dtos
+namespace WebApplication.Models
 {
     public class UserDto
     {
         public int Id { get; set; }
         
         [Required]
-        public string RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; }
         
         [Required]
-        public string LastActivityDate { get; set; }
+        public DateTime LastActivityDate { get; set; }
     }
 }

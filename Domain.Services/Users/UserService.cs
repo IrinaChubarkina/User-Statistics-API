@@ -1,49 +1,35 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Domain.Core.Abstractions.Repositories;
 using Domain.Core.Abstractions.Services;
-using Domain.Core.Dtos;
 using Domain.Core.Entities;
-using Microsoft.Extensions.Logging;
 
 namespace Domain.Services.Users
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly ILogger _logger;
-
-        public UserService(IUserRepository userRepository, IMapper mapper, ILogger<UserService> logger)
+        
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
         }
 
-        public IEnumerable<UserDto> GetAll()
+        public Task<IEnumerable<User>> GetAll()
         {
-            var users = _userRepository.GetAll().ToList();
-            var userDtos = _mapper.Map<IEnumerable<UserDto>>(users);
-            return userDtos;
+            return _userRepository.GetAll();
         }
 
-        public async Task<int> AddUserAsync(UserDto userDto)
+        public async Task<User> Add(User user)
         {
-            try
+            if (user.RegistrationDate > user.LastActivityDate)
             {
-                var user = _mapper.Map<User>(userDto);
-                await _userRepository.AddUserAsync(user);
-                return user.Id;
+                throw new ArgumentException(nameof(User));
             }
-            catch (Exception e)
-            {
-                _logger.LogWarning(e, "Can not add user \n");
-                throw;
-            }
+            
+            await _userRepository.Add(user);
+            return user;
         }
     }
 }

@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using Domain.Core.Abstractions.Repositories;
+using Domain.Core.Dtos;
 using Domain.Core.Entities;
 using Infrastructure.EntityFramework;
 using Microsoft.EntityFrameworkCore;
@@ -18,24 +20,32 @@ namespace Infrastructure.Repositories
             _context = context;
         }
         
-        public IQueryable<User> GetBySpecification(ISpecification<User> spec)
+        public Task<int> CountBySpecification(ISpecification<User> spec)
         {
             var evaluator = new SpecificationEvaluator();
-            return evaluator.GetQuery(GetAll(), spec);
+            var allUsers = _context.Users.AsQueryable().AsNoTracking();
+            return evaluator.GetQuery(allUsers, spec).CountAsync();
         }
 
-        public IQueryable<User> GetAll()
+        public async Task<IEnumerable<User>> GetAll()
         {
-            return _context.Users
-                .AsQueryable()
-                .AsNoTracking();
+            return await _context.Users.AsNoTracking().ToListAsync();
         }
 
-        public async Task<int> AddUserAsync(User user)
+        public async Task Add(User user)
         {
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();
-            return user.Id;
+        }
+        
+        public async Task<IEnumerable<UserGroup>> GetGroupedByLifeTime()
+        {
+            return await _context.Users
+                .AsQueryable()
+                .AsNoTracking()
+                .GroupBy(x => x.LifeTime)
+                .Select(group => new UserGroup(group.Count(), group.Key))
+                .ToListAsync();
         }
     }
 }
